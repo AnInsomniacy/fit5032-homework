@@ -104,7 +104,52 @@
       <h2>Attribute, Class and Style Binding with <code>v-bind</code></h2>
       <p>Highlighting Specific Authors:</p>
 
-      <!-- Dynamic class binding -->
+      <!-- EFOLIO TASK 2.2: George Orwell Highlight -->
+      <h3>🎯 TASK 2.2: George Orwell Highlight</h3>
+      <p>Demonstrating attribute, class and style bindings for George Orwell:</p>
+
+      <button @click="highlightOrwell = !highlightOrwell"
+              class="orwell-toggle"
+              style="background: linear-gradient(45deg, #ff6b6b, #ff4757) !important; color: white !important;">
+        {{ highlightOrwell ? 'Remove' : 'Add' }} George Orwell Highlight
+      </button>
+
+      <p><strong>Debug:</strong> highlightOrwell = {{ highlightOrwell }}</p>
+
+      <div class="orwell-demo">
+        <div v-for="author in authors"
+             :key="`orwell-${author.id}`"
+             class="author-demo-card"
+             :class="{
+               'orwell-highlight': author.name === 'George Orwell' && highlightOrwell,
+               'normal-author': author.name !== 'George Orwell' || !highlightOrwell
+             }"
+             :style="{
+               backgroundColor: author.name === 'George Orwell' && highlightOrwell ? '#ff6b6b !important' : '#f8f9fa',
+               color: author.name === 'George Orwell' && highlightOrwell ? 'white !important' : '#333',
+               fontWeight: author.name === 'George Orwell' ? 'bold' : 'normal',
+               border: author.name === 'George Orwell' && highlightOrwell ? '3px solid #ff4757' : '1px solid #ddd',
+               transform: author.name === 'George Orwell' && highlightOrwell ? 'scale(1.05)' : 'scale(1)',
+               boxShadow: author.name === 'George Orwell' && highlightOrwell ? '0 8px 25px rgba(255, 107, 107, 0.6)' : '0 2px 5px rgba(0,0,0,0.1)',
+               transition: 'all 0.5s ease'
+             }"
+             :data-author-name="author.name"
+             :data-is-orwell="author.name === 'George Orwell'"
+             :data-birth-year="author.birthYear"
+             :title="author.name === 'George Orwell' ? 'This is George Orwell - Author of 1984!' : `Author: ${author.name}`"
+             :id="`author-highlight-${author.id}`">
+
+          <div class="author-info">
+            <h4>{{ author.name }}</h4>
+            <p>Born: {{ author.birthYear }}</p>
+            <p>Genres: {{ author.genres.join(', ') }}</p>
+            <span v-if="author.name === 'George Orwell'" class="orwell-badge">🏆 Featured Author</span>
+            <span v-if="author.name === 'George Orwell' && highlightOrwell" class="highlight-indicator">✨ HIGHLIGHTED!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Original binding examples -->
       <h3>Class Binding</h3>
       <ul>
         <li v-for="author in authors"
@@ -124,9 +169,13 @@
         <li v-for="author in authors"
             :key="`style-${author.id}`"
             :style="{
-              backgroundColor: highlightModernAuthors && author.birthYear > 1850 ? '#42b883' : '',
-              color: highlightModernAuthors && author.birthYear > 1850 ? 'white' : '',
-              fontWeight: author.name === 'George Orwell' ? 'bold' : 'normal'
+              backgroundColor: highlightModernAuthors && author.birthYear > 1850 ? '#42b883' : '#f0f0f0',
+              color: highlightModernAuthors && author.birthYear > 1850 ? 'white' : '#333',
+              fontWeight: author.name === 'George Orwell' ? 'bold' : 'normal',
+              padding: '10px',
+              margin: '5px 0',
+              borderRadius: '5px',
+              transition: 'all 0.3s ease'
             }">
           {{ author.name }} - {{ author.genres.join(', ') }}
         </li>
@@ -136,11 +185,9 @@
       <h3>Attribute Binding</h3>
       <p>Dynamic links and attributes:</p>
       <div v-for="author in authors" :key="`link-${author.id}`" class="author-card">
-        <img :src="`https://via.placeholder.com/50x50?text=${author.name.charAt(0)}`"
-             :alt="`${author.name} avatar`"
-             :title="author.name">
         <a :href="`#${author.name.toLowerCase().replace(' ', '-')}`"
-           :id="`author-${author.id}`">
+           :id="`author-${author.id}`"
+           :title="`Click to jump to ${author.name}`">
           {{ author.name }}
         </a>
         <span :data-birth-year="author.birthYear">({{ author.birthYear }})</span>
@@ -158,6 +205,7 @@ import bookstores from "../assets/json/bookstores.json"
 
 const showMessage = ref(false)
 const highlightModernAuthors = ref(false)
+const highlightOrwell = ref(false)
 
 // Activity 2: Get authors born after 1850
 const modernAuthors = computed(() => {
@@ -224,6 +272,15 @@ const austen = computed(() => {
 
   .author-card a {
     color: #6dd4a8 !important;
+  }
+
+  .author-demo-card {
+    background-color: #34495e !important;
+    color: #ecf0f1 !important;
+  }
+
+  .author-info h4, .author-info p {
+    color: #ecf0f1 !important;
   }
 }
 
@@ -303,10 +360,6 @@ button:hover {
   border-radius: 5px;
 }
 
-.author-card img {
-  border-radius: 50%;
-}
-
 .author-card a {
   text-decoration: none;
   color: #42b883;
@@ -315,5 +368,104 @@ button:hover {
 
 .author-card a:hover {
   text-decoration: underline;
+}
+
+/* EFOLIO TASK 2.2: George Orwell Highlight Styles */
+.orwell-toggle {
+  background: linear-gradient(45deg, #ff6b6b, #ff4757) !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.orwell-toggle:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4) !important;
+  background: linear-gradient(45deg, #ff5252, #ff3742) !important;
+}
+
+.orwell-demo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.author-demo-card {
+  padding: 20px;
+  border-radius: 10px;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.author-demo-card:hover {
+  transform: translateY(-3px) !important;
+}
+
+.orwell-highlight {
+  animation: orwellGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes orwellGlow {
+  from {
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+  }
+  to {
+    box-shadow: 0 12px 35px rgba(255, 107, 107, 0.7);
+  }
+}
+
+.normal-author {
+  opacity: 0.7;
+}
+
+.orwell-highlight .normal-author {
+  opacity: 1;
+}
+
+.author-info h4 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+}
+
+.author-info p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+.orwell-badge {
+  display: inline-block;
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  color: #333;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.highlight-indicator {
+  display: inline-block;
+  background: linear-gradient(45deg, #ff6b6b, #ff4757);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-left: 5px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 </style>
