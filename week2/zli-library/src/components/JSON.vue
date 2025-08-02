@@ -1,4 +1,8 @@
-<!-- JSONLab.vue -->
+<!--
+  JSON Data & Vue Directives Lab
+  Author: zetao li
+  Student ID: 34304525
+-->
 <template>
   <div class="json-lab">
     <h1>🗄️ JSON Data & Vue Directives Lab</h1>
@@ -9,18 +13,28 @@
 
       <h3>Iterating through Arrays</h3>
       <!-- Activity 6: Render a list containing author names and their birth years. Hint: Make use of the v-for directive to iterate through the array of authors. -->
-      <!-- TODO: CODE TO RENDER LIST OF AUTHORS HERE -->
+      <ul>
+        <li v-for="author in authors" :key="author.id">
+          {{ author.name }} ({{ author.birthYear }})
+        </li>
+      </ul>
 
       <h3>Filtering Arrays</h3>
       <!-- Activity 7: Render a list containing authors born after 1850. Hint: Make use of the v-for directive to iterate through the array of authors that you have filtered out. -->
       <p>Authors born after 1850:</p>
-      <!-- TODO: CODE TO RENDER LIST OF AUTHORS HERE -->
+      <ul>
+        <li v-for="author in modernAuthors" :key="author.id">
+          {{ author.name }} ({{ author.birthYear }})
+        </li>
+      </ul>
 
       <h3>Mapping Arrays</h3>
       <p>Famous works:</p>
       <ul>
         <!-- Activity 8: Render a list of all famous works. Hint: Use the v-for directive to iterate through the array of authors that you have filtered out. -->
-        <!-- TODO: CODE TO RENDER LIST OF FAMOUS WORKS HERE -->
+        <li v-for="work in allFamousWorks" :key="work">
+          {{ work }}
+        </li>
       </ul>
 
       <h3>Finding in Arrays</h3>
@@ -29,7 +43,11 @@
       <h3>Nested Arrays/Objects</h3>
       <p>{{ austen?.name }}'s works:</p>
       <!-- Activity 9: Render a list of Austen's works. Hint: Use the v-for directive to iterate through the array of authors that you have filtered out. -->
-      <!-- TODO: CODE TO RENDER LIST OF AUSTEN'S WORKS HERE -->
+      <ul>
+        <li v-for="work in austen?.famousWorks" :key="work.title">
+          {{ work.title }} ({{ work.year }})
+        </li>
+      </ul>
     </section>
 
     <section class="lab-section">
@@ -40,46 +58,93 @@
       <p>
         Company:
         <!-- Activity 9a: Get the company name from the bookstores object. -->
-        <!-- TODO: CODE TO GET COMPANY NAME HERE -->
+        {{ bookstores.name }}
       </p>
 
       <p>
         Total Stores:
         <!-- Activity 9b: Get the total number of stores from the bookstores object. -->
-        <!-- TODO: CODE TO GET TOTAL STORES HERE -->
+        {{ bookstores.totalStores }}
       </p>
 
       <h3>Iterating Object Properties</h3>
       <p>Store Types:</p>
       <!-- Activity 10: Iterate through the storeTypes array and display the store type and the number of stores that use that type. -->
-      <!-- TODO: CODE TO RENDER LIST OF STORE TYPES HERE -->
+      <ul>
+        <li v-for="(count, type) in bookstores.storeTypes" :key="type">
+          {{ type }}: {{ count }} stores
+        </li>
+      </ul>
 
       <h3>Nested Objects</h3>
       <p>Opening Hours:</p>
       <!-- Activity 11: Iterate through the openingHours object and display the day of the week and the opening and closing times. -->
-      <!-- TODO: CODE TO RENDER LIST OF OPENING HOURS HERE -->
+      <ul>
+        <li v-for="(hours, day) in bookstores.openingHours" :key="day">
+          {{ day }}: {{ hours.open }} - {{ hours.close }}
+        </li>
+      </ul>
 
       <h3>Working with Arrays in Objects</h3>
       <!-- Activity 12: Get the top sellers from the bookstores object. -->
-      <!-- TODO: CODE TO GET TOP SELLERS HERE -->
-      <p>We operate in:</p>
-      <p>Our #1 seller:</p>
+      <p>We operate in: {{ bookstores.countries.join(', ') }}</p>
+      <p>Our #1 seller: {{ bookstores.topSellers[0] }}</p>
     </section>
 
     <section class="lab-section">
       <h2>v-if & v-else</h2>
       <p>Toggle visibility based on a condition.</p>
       <!-- Activity 13: Toggle the message visibility when the button is clicked. -->
-      <!-- TODO: CODE TO TOGGLE MESSAGE VISIBILITY HERE. Hint: Use the v-if directive. -->
       <button @click="showMessage = !showMessage">Toggle Message</button>
-      <p class="message success">✨ You're a Vue superstar! ✨</p>
-      <p>Click the button to see a message.</p>
+      <p v-if="showMessage" class="message success">✨ You're a Vue superstar! ✨</p>
+      <p v-else>Click the button to see a message.</p>
     </section>
 
     <section class="lab-section">
       <h2>Attribute, Class and Style Binding with <code>v-bind</code></h2>
       <p>Highlighting Specific Authors:</p>
 
+      <!-- Dynamic class binding -->
+      <h3>Class Binding</h3>
+      <ul>
+        <li v-for="author in authors"
+            :key="author.id"
+            :class="{ highlight: author.birthYear > 1850 }">
+          {{ author.name }} ({{ author.birthYear }})
+        </li>
+      </ul>
+
+      <!-- Dynamic style binding -->
+      <h3>Style Binding</h3>
+      <p>Toggle author highlight:</p>
+      <button @click="highlightModernAuthors = !highlightModernAuthors">
+        {{ highlightModernAuthors ? 'Hide' : 'Show' }} Modern Authors
+      </button>
+      <ul>
+        <li v-for="author in authors"
+            :key="`style-${author.id}`"
+            :style="{
+              backgroundColor: highlightModernAuthors && author.birthYear > 1850 ? '#42b883' : '',
+              color: highlightModernAuthors && author.birthYear > 1850 ? 'white' : '',
+              fontWeight: author.name === 'George Orwell' ? 'bold' : 'normal'
+            }">
+          {{ author.name }} - {{ author.genres.join(', ') }}
+        </li>
+      </ul>
+
+      <!-- Attribute binding -->
+      <h3>Attribute Binding</h3>
+      <p>Dynamic links and attributes:</p>
+      <div v-for="author in authors" :key="`link-${author.id}`" class="author-card">
+        <img :src="`https://via.placeholder.com/50x50?text=${author.name.charAt(0)}`"
+             :alt="`${author.name} avatar`"
+             :title="author.name">
+        <a :href="`#${author.name.toLowerCase().replace(' ', '-')}`"
+           :id="`author-${author.id}`">
+          {{ author.name }}
+        </a>
+        <span :data-birth-year="author.birthYear">({{ author.birthYear }})</span>
+      </div>
     </section>
   </div>
 </template>
@@ -88,30 +153,30 @@
 import { ref, computed } from "vue"
 
 // Activity 1: Import JSON files (authors.json and bookstores.json)
-// TODO: CODE TO IMPORT JSON FILES HERE
 import authors from "../assets/json/authors.json"
 import bookstores from "../assets/json/bookstores.json"
 
 const showMessage = ref(false)
+const highlightModernAuthors = ref(false)
 
 // Activity 2: Get authors born after 1850
 const modernAuthors = computed(() => {
-  // TODO: CODE TO FILTER ARRAY OF AUTHORS HERE
+  return authors.filter(author => author.birthYear > 1850)
 })
 
 // Activity 3: Get all famous works
 const allFamousWorks = computed(() => {
-  // TODO: CODE TO GET ALL FAMOUS WORKS HERE
+  return authors.flatMap(author => author.famousWorks.map(work => work.title))
 })
 
 // Activity 4: Find author by name
 const orwell = computed(() => {
-  // TODO: CODE TO FIND AUTHOR BY NAME HERE
+  return authors.find(author => author.name === "George Orwell")
 })
 
 // Activity 5: Find author by ID
 const austen = computed(() => {
-  // TODO: CODE TO FIND AUTHOR BY ID HERE
+  return authors.find(author => author.id === 1)
 })
 </script>
 
@@ -124,6 +189,42 @@ const austen = computed(() => {
   background-color: #f4f4f4;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .json-lab {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+  }
+
+  .lab-section {
+    background-color: #2d2d2d !important;
+    color: #e0e0e0;
+  }
+
+  h1, h2, h3, p {
+    color: #e0e0e0 !important;
+  }
+
+  code {
+    background-color: #404040 !important;
+    color: #e0e0e0 !important;
+  }
+
+  li {
+    background-color: #404040 !important;
+    color: #e0e0e0 !important;
+  }
+
+  .author-card {
+    background-color: #404040 !important;
+  }
+
+  .author-card a {
+    color: #6dd4a8 !important;
+  }
 }
 
 h1,
@@ -156,6 +257,7 @@ h1 {
 
 .highlight {
   background-color: #42b883;
+  color: white;
 }
 
 code {
@@ -169,10 +271,49 @@ ul {
   list-style-type: none;
   padding: 0;
 }
+
 li {
   background-color: #f0f0f0;
   padding: 10px;
   margin: 5px 0;
   border-radius: 5px;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #42b883;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button:hover {
+  background-color: #369970;
+}
+
+.author-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
+.author-card img {
+  border-radius: 50%;
+}
+
+.author-card a {
+  text-decoration: none;
+  color: #42b883;
+  font-weight: bold;
+}
+
+.author-card a:hover {
+  text-decoration: underline;
 }
 </style>
