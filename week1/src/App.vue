@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <header class="app-header">
-      <img alt="Vue logo" src="./assets/logo.png" class="logo">
       <h1>FIT5032 S2 2025 - Lab Assignment</h1>
     </header>
 
